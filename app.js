@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { requiresAuth } = require("express-openid-connect");
+const auth0Middleware = require("./auth/auth0");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const logger = require("./logger/logger");
@@ -40,9 +42,12 @@ app.use(helmet());
 
 app.use(httpLogger);
 
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth0Middleware);
+
 // Use books router
-app.use("/api/v1/books", bookRouter);
-app.use("/api/v1/authors", authorRouter);
+app.use("/api/v1/books", requiresAuth(), bookRouter);
+app.use("/api/v1/authors", requiresAuth(), authorRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Bookstore!");
@@ -53,7 +58,7 @@ app.use((err, req, res, next) => {
   logger.error(err.message);
 
   const errorStatus = err.status || 500;
-  res.status(errorStatus).send(err.message);
+  res.status(errorStatus).send("Something Broke");
 
   next();
 });
