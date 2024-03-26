@@ -1,4 +1,5 @@
 const bookModel = require("../models/books");
+const logger = require("../logger/logger");
 
 function getAllBooks(req, res) {
   bookModel
@@ -7,7 +8,7 @@ function getAllBooks(req, res) {
       res.send(books);
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err.message);
       res.status(500).send(err);
     });
 }
@@ -20,7 +21,7 @@ function getBookByID(req, res) {
       res.status(200).send(book);
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err.message);
       res.status(404).send(err);
     });
 }
@@ -48,7 +49,7 @@ function updateBookByID(req, res) {
   bookModel
     .findByIdAndUpdate(id, book, { new: true })
     .then((book) => {
-      console.log(book);
+      // console.log(book);
       res.status(201).send({
         message: "Book successfully updated",
         data: book,
@@ -69,7 +70,7 @@ function deleteBookByID(req, res) {
       res.status(200).send(`Book with id ${id} successfully deleted`);
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err.message);
       res.status(500).send(err);
     });
 }

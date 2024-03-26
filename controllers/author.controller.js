@@ -1,5 +1,6 @@
 const authorModel = require("../models/authors");
 const bookModel = require("../models/books");
+const logger = require("../logger/logger");
 
 function getAllAuthors(req, res) {
   authorModel
@@ -8,7 +9,7 @@ function getAllAuthors(req, res) {
       res.send(authors);
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err.message);
       res.status(500).send(err);
     });
 }
@@ -21,7 +22,7 @@ function getAuthorByID(req, res) {
       res.status(200).send(author);
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err.message);
       res.status(404).send(err);
     });
 }
@@ -49,7 +50,7 @@ function updateAuthorByID(req, res) {
   authorModel
     .findByIdAndUpdate(id, author, { new: true })
     .then((author) => {
-      console.log(author);
+      // console.log(author);
       res.status(201).send({
         message: "Author successfully updated",
         data: author,
@@ -72,7 +73,7 @@ function deleteAuthorByID(req, res) {
         .send(`Author with id ${id} successfully deleted: ${author}`);
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err.message);
       res.status(500).send(err);
     });
 }
